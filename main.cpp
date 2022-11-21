@@ -90,48 +90,43 @@ cv::Mat getScreen (HWND hWND)
     return mat;
 }
 
-int main()
+void handle(type type, int &filenum, cv::Mat const &screen)
 {
-    // File Nums at 0 will increment every time a file is saved
-    int filenumF1{0}, filenumF2{0};
-
-    cv::Mat screen_mat;
-
-    while (true)
+    std::string directory;
+    switch (type)
     {
-        perfTimer timer;                                                            /*Measure performance of the loop*/
-        screen_mat = getScreen(GetDesktopWindow());                                 /*Get the screen*/
-
-        std::string filename_f1, filename_f2;                                       /*File names for saving*/
-        std::ostringstream os_positive, os_negative;                                /*String stream for file names*/
-
-        /*Reset the file name and number every run to avoid duplicates*/
-        os_positive << "C:\\Users\\Ethernel\\Desktop\\" << filenumF1 << ".png";
-        os_negative << "C:\\Users\\Ethernel\\Desktop\\" << filenumF2 << ".png";
-
-        filename_f1 = os_positive.str();                                            /*Convert the string stream to a string, this is the part which can duplicate*/
-        filename_f2 = os_negative.str();
-
-        if (GetAsyncKeyState(VK_F1))                                                /*Check if F1 is pressed    |   KeyCode VK_F1 */
-        {                                                                           /*https://learn.microsoft.com/en-us/windows/win32/inputdev/virtual-key-codes*/
-            cv::imwrite(filename_f1 , screen_mat);                                  /*Save the screen to a file*/
-            std::cout << filename_f1 << "\n";                                       /*Print the file name to the console*/
-            filenumF1++;
-        }
-
-        else if (GetAsyncKeyState(VK_F2))                                           /*Same things here instead wait for F2*/
-        {
-            cv::imwrite(filename_f2, screen_mat);
-            std::cout << filename_f2 << "\n";
-            filenumF2++;
-        }
-        else {continue;}
+        case type::positive:
+            directory = "C:\\Users\\Ethernel\\Desktop\\ores\\iron_ore\\positive\\";
+            break;
+        case type::negative:
+            directory = "C:\\Users\\Ethernel\\Desktop\\ores\\iron_ore\\negative\\";
+            break;
     }
-
-    // Using the example above you can leave the loop or exit the program
-
+    std::string const filename = directory + std::to_string(filenum) + ".png";
+    cv::imwrite(filename, screen);
+    std::cout << filename;
+    std::cout.put(std::cout.widen('\n'));
+    ++filenum;
 }
 
+void screenCaptureKeys() {
+    // File Nums at 0 will increment every time a file is saved
+    int filenumF1 {0}, filenumF2 {0};
+    ScreenCapture screencap;
+    cv::Mat image_screen;
 
+    while (true) {
+        image_screen = screencap.getScreen(GetDesktopWindow());
+        auto key = cv::waitKey(1);
 
+        if (GetAsyncKeyState(VK_F1))
+            handle(type::positive, filenumF1, image_screen);
+        else if (GetAsyncKeyState(VK_F2))
+            handle(type::negative, filenumF2, image_screen);
+    }
+}
 
+int main()
+{
+    // call the function here !
+}

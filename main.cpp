@@ -12,34 +12,8 @@
 
 /// https://github.com/Ethernel0
 
-class  perfTimer
-{   /// timer class, used for performance measurement   |   Cherno Tutorial
-public:
-    perfTimer()
-    {
-        mStartTimepoint = std::chrono::high_resolution_clock::now();
-    }
-    ~perfTimer()
-    {
-        Stop();
-    }
-
-    void Stop()
-    {
-        auto endTimePoint = std::chrono::high_resolution_clock::now();
-        auto start = std::chrono::time_point_cast<std::chrono::microseconds>(mStartTimepoint).time_since_epoch().count();
-        auto end = std::chrono::time_point_cast<std::chrono::microseconds>(endTimePoint).time_since_epoch().count();
-        auto duration = end - start;
-        double ms = duration * 0.001;
-        std::cout << duration << "us (" << ms << "ms)" << "\n";
-    }
-private:
-    std::chrono::time_point<std::chrono::high_resolution_clock> mStartTimepoint;
-};
-
 cv::Mat getScreen (HWND hWND)
 {
-    //  PerfTimer timer;
     /// VARS
     HDC deviceContext;
     HDC memoryDeviceContext;
